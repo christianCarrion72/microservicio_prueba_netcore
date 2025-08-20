@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "ss2aJ4kWD+p573YV/hiL8m+Qo6pU8WoSIroX3pjqy04=",
+  "Source": "CalcService",
+  "BasePath": "_content/CalcService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

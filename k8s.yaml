@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calcservice
+  labels:
+    app: calcservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calcservice
+  template:
+    metadata:
+      labels:
+        app: calcservice
+    spec:
+      containers:
+        - name: calcservice
+          image: calcservice:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calcservice
+  labels:
+    app: calcservice
+spec:
+  selector:
+    app: calcservice
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
