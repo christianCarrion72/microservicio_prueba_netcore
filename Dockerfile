@@ -19,8 +19,9 @@ WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-# Copiar los archivos publicados
+# Copiar los archivos publicados y el archivo .env
 COPY --from=build /app/publish .
+COPY .env .
 
 # Configurar el usuario no-root por seguridad
 USER $APP_UID
