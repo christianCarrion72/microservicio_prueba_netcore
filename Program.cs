@@ -1,8 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Database Connection
+var connectionString = builder.Configuration["POSTGRES_CONNECTION_STRING"];
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("La cadena de conexión 'POSTGRES_CONNECTION_STRING' no está configurada.");
+}
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // Swagger + Endpoints
 builder.Services.AddEndpointsApiExplorer();
@@ -18,6 +28,15 @@ app.MapHealthChecks("/healthz");
 
 // Redirige a Swagger si alguien entra a "/"
 app.MapGet("/", () => Results.Redirect("/swagger"));
+
+// Endpoint para obtener todas las materias
+app.MapGet("/api/materias", async (ApplicationDbContext db) =>
+{
+    var materias = await db.Materias.ToListAsync();
+    return Results.Ok(materias);
+})
+.WithName("ObtenerMaterias")
+.Produces<List<Materia>>(StatusCodes.Status200OK);
 
 // Endpoints de la calculadora (usa decimal para precisión en números con coma)
 app.MapGet("/api/sum", ([FromQuery] decimal a, [FromQuery] decimal b) =>
